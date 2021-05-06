@@ -5,19 +5,46 @@
 // @description  try to take over the world!
 // @author       You
 // @match        https://yandex.ru/*
-// @match        https://xn----8sbabr6ahc3e.xn--p1ai/*
+// @match        https://napli.ru/*
+// @match        https://xn----7sbab5aqcbiddtdj1e1g.xn--p1ai/*
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
 // @grant        none
 // ==/UserScript==
-
-let keywords = ["тюнинг приоры ", "Подвеска двигателя нового образца"," руководство лада калина"];
-let btnN = document.getElementsByClassName("button_theme_search")[0]
+let sites = {
+    "napli.ru":["10 самых популярных шрифтов от Google ",
+                "Отключение редакций и ревизий в WordPress ",
+                "Вывод произвольных типов записей и полей в WordPress"],
+    "xn----7sbab5aqcbiddtdj1e1g.xn--p1ai":["гобой",
+                                           "Как звучит флейта",
+                                           "Кларнет", "Валторна"]}
+   /* "psyholog.me":["центр здоровых отношений ",
+                   "Услуги центра здоровых отношений ",
+                   "Чекалина Елена психолог "],
+    "xn----8sbabr6ahc3e.xn--p1ai":["тюнинг приоры ",
+                                   "Подвеска двигателя нового образца",
+                                   " руководство лада калина"]
+}*/
+//let searchs = ["www.google.com","yandex.ru"];
+//let search = object.keys(searchs)[getRandom(0,1)];
+//let search = "yandex.ru";//searchs[getRandom(0,searchs.length)];
+let site = Object.keys(sites)[getRandom(0,Object.keys(sites).length)];
+let keywords = sites[site] ;
+let btnN = document.getElementsByClassName("button_theme_search")[0];
 let links = document.links;
 let keyword = keywords[getRandom(0, keywords.length)];
 let yaInput = document.getElementById("text");
 let i = 0;
 
 if(btnN!== undefined){
+    document.cookie = "site=" + site;
+}else if(location.hostname == "yandex.ru"){
+    site = getCookie("site");
+}else {
+    site = location.hostname;
+}
+
+if(btnN!== undefined){
+    document.cookie = "site=" + site;
     let timerId = setInterval(()=>{
         yaInput.value += keyword[i];
         i++;
@@ -25,53 +52,57 @@ if(btnN!== undefined){
             clearInterval(timerId);
             btnN.click();
         }
-    },250);
+    },100);
 
-}else if(location.hostname == "xn----8sbabr6ahc3e.xn--p1ai" ){//на сайте лада.онлайн кликаем рандомные ссылки и с вероятностью 70% попадаем на яндекс
-    console.log("работает");
+}else if(location.hostname == site ){//на сайте лада.онлайн кликаем рандомные ссылки и с вероятностью 70% попадаем на яндекс
+    console.log("Переходим на сайт");
     setTimeout(()=>{
         let index = getRandom(0,links.length);
-        if(getRandom(0,101)>=10){
-            location.href = "https://yandex.ru";
+        if(getRandom(0,101)>=50){
+            location.href ="https://yandex.ru/";
         }
-        if(links[index].href.indexOf("xn----8sbabr6ahc3e.xn--p1ai")!=-1)
-            links[index].click();
-    }, getRandom(1000,2000));
+        if(links[index].href.indexOf(site)!=-1);
+        links[index].click();
+    }, getRandom(4000,7000));
 
 }
 
 
 else{
-    let nextYaPage = true //Добавляем переменную переключающую на следующую страницу
+    let nextYaPage = true; //Добавляем переменную переключающую на следующую страницу
     for(let i=0; i<links.length; i++){
-        if(links[i].href.indexOf("xn----8sbabr6ahc3e.xn--p1ai")!=-1){
+        if(links[i].href.indexOf(site)!=-1){
             let link = links[i];
             console.log("Найдено "+link);
             nextYaPage = false;
             setTimeout(()=>{// задержка клика
                 link.removeAttribute("target");
-                link.click();}
-                       ,getRandom(100,500));
+                link.click();
+            }, getRandom(3000,5000));
             break;
         }
     }
-    if(document.querySelector('.pager__item_current_yes').ariaLabel =="Текущая страница 4"){
+    if(document.querySelector('.pager__item_current_yes').ariaLabel =="Текущая страница 6"){
         nextYaPage = false;
-        setTimeout(()=>{
+        //setTimeout(()=>{
+        location.href = "https://yandex.ru/";}
+    //,getRandom(3000,4000));
+}
 
-
-            location.href = "https://yandex.ru";}
-                   ,getRandom(3000,4000));
-
-    }
-    if (document.querySelector(".pager__item_current_yes").ariaLabel !=="Текущая страница 4"){// нажимаем на кнопку следующая страница в течении 3-5 сек
-        setTimeout(()=>{
-            document.querySelector(".pager__item_kind_next").click();}
-                   ,getRandom(3000,4000));
-    }
+if (nextYaPage){// нажимаем на кнопку следующая страница в течении 3-5 сек
+    setTimeout(()=>{
+        document.querySelector(".pager__item_kind_next").click();
+    }, getRandom(3000,5000));
 }
 
 
 function getRandom(min,max){
     return Math.floor(Math.random()*(max-min)+min);
+}
+
+function getCookie(name) {
+    let matches = document.cookie.match(new RegExp(
+        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    ));
+    return matches ? decodeURIComponent(matches[1]) : undefined;
 }
