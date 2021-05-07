@@ -34,7 +34,7 @@ let links = document.links;
 let keyword = keywords[getRandom(0, keywords.length)];
 let yaInput = document.getElementById("text");
 let i = 0;
-
+let nextYaPage;
 if(btnN!== undefined){
     document.cookie = "site=" + site;
 }else if(location.hostname == "yandex.ru"){
@@ -69,7 +69,7 @@ if(btnN!== undefined){
 
 
 else{
-    let nextYaPage = true; //Добавляем переменную переключающую на следующую страницу
+    nextYaPage = true; //Добавляем переменную переключающую на следующую страницу
     for(let i=0; i<links.length; i++){
         if(links[i].href.indexOf(site)!=-1){
             let link = links[i];
@@ -89,7 +89,7 @@ else{
     //,getRandom(3000,4000));
 }
 
-if (nextYaPage){// нажимаем на кнопку следующая страница в течении 3-5 сек
+if (nextYaPage === true){// нажимаем на кнопку следующая страница в течении 3-5 сек
     setTimeout(()=>{
         document.querySelector(".pager__item_kind_next").click();
     }, getRandom(3000,5000));
