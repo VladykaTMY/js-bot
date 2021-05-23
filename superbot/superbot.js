@@ -81,7 +81,7 @@ if(btnK!==undefined){
             console.log("обратно в поисковик");
 
         }
-        else(links[index].href.indexOf(site)!=-1);
+        if(links[index].href.indexOf(site)!=-1);
         links[index].click();
     }, 4000);
 
